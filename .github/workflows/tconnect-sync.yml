@@ -1,0 +1,48 @@
+name: tconnect -> Nightscout sync
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # every 5 minutes
+  workflow_dispatch: {}     # možnost spustit ručně přes UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies (if present)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            echo "requirements.txt not found - skipping pip install -r requirements.txt"
+          fi
+
+      - name: Run tconnectsync (one-shot)
+        env:
+          TCONNECT_EMAIL: ${{ secrets.TCONNECT_EMAIL }}
+          TCONNECT_PASSWORD: ${{ secrets.TCONNECT_PASSWORD }}
+          NS_URL: ${{ secrets.NS_URL }}
+          NS_SECRET: ${{ secrets.NS_SECRET }}
+          TIMEZONE_NAME: ${{ secrets.TIMEZONE_NAME }}
+        run: |
+          # Spustí hlavní script z repozitáře. Pokud se v repu jmenuje jinak, uprav cestu.
+          python3 main.py
