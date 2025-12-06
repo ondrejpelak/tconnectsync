@@ -28,17 +28,16 @@ jobs:
           pip install "git+https://github.com/jwoglom/tconnectsync.git@HEAD" || \
           pip install "git+https://github.com/jwoglom/tconnectsync.git"
 
-       - name: Run tconnectsync (one-shot)
-          env:
-            TCONNECT_EMAIL: ${{ secrets.TCONNECT_EMAIL }}
-            TCONNECT_PASSWORD: ${{ secrets.TCONNECT_PASSWORD }}
-            NS_URL: ${{ secrets.NS_URL }}
-            NS_SECRET: ${{ secrets.NS_SECRET }}
-            TIMEZONE_NAME: ${{ secrets.TIMEZONE_NAME }}
-          run: |
-            # Explicitně nastavíme region na EU (bezpečné — není to secret)
-            export TCONNECT_REGION="EU"
-            echo "For debug: forcing TCONNECT_REGION=$TCONNECT_REGION"
-            # spustíme tconnectsync
-            python3 -m tconnectsync
-
+      - name: Run tconnectsync (one-shot)
+        env:
+          TCONNECT_EMAIL: ${{ secrets.TCONNECT_EMAIL }}
+          TCONNECT_PASSWORD: ${{ secrets.TCONNECT_PASSWORD }}
+          NS_URL: ${{ secrets.NS_URL }}
+          NS_SECRET: ${{ secrets.NS_SECRET }}
+          TIMEZONE_NAME: ${{ secrets.TIMEZONE_NAME }}
+        run: |
+          # Explicitně nastavíme region na EU (bezpečné — není to secret)
+          export TCONNECT_REGION="EU"
+          echo "For debug: forcing TCONNECT_REGION=$TCONNECT_REGION"
+          # spustíme tconnectsync
+          python3 -m tconnectsync
