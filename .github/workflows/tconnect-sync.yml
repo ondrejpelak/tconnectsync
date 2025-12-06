@@ -22,7 +22,11 @@ jobs:
       - name: Install tconnectsync + dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install git+https://github.com/jwoglom/tconnectsync.git@main
+          # pokusíme se postupně o několik referencí - první, která projde, se použije
+          pip install "git+https://github.com/jwoglom/tconnectsync.git@main" || \
+          pip install "git+https://github.com/jwoglom/tconnectsync.git@master" || \
+          pip install "git+https://github.com/jwoglom/tconnectsync.git@HEAD" || \
+          pip install "git+https://github.com/jwoglom/tconnectsync.git"
 
       - name: Run tconnectsync (one-shot)
         env:
